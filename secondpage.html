@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RajMart - Authentic Rajasthani Products</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'rajasthan-gold': '#FFD700',
+                        'rajasthan-red': '#DC143C',
+                        'rajasthan-blue': '#4169E1',
+                        'rajasthan-orange': '#FF8C00',
+                        'rajasthan-green': '#228B22'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .gradient-bg { background: linear-gradient(135deg, #FF9933 0%, #5B8C5A 50%, #8B4513  100%,#FFFFF0 70%); }
+        .glass-effect { backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        .category-icon:hover { transform: scale(1.1) rotate(5deg); }
+        .product-image { transition: transform 0.3s ease; }
+        .product-image:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="text-3xl font-bold gradient-bg bg-clip-text text-transparent">🏛️ DESH.e</div>
+                    <div class="hidden md:flex space-x-6">
+                        <button onclick="showPage('home')" class="text-gray-700 hover:text-rajasthan-red transition-colors">Home</button>
+                        <button onclick="showPage('categories')" class="text-gray-700 hover:text-rajasthan-red transition-colors">Categories</button>
+                        <button onclick="showPage('sellers')" class="text-gray-700 hover:text-rajasthan-red transition-colors">Sellers</button>
+                        <button onclick="showPage('offers')" class="text-gray-700 hover:text-rajasthan-red transition-colors">Offers</button>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <select class="bg-gray-100 px-3 py-2 rounded-lg" id="languageSelect">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="raj">राजस्थानी</option>
+                    </select>
+                    <button onclick="toggleAIAssistant()" class="bg-rajasthan-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                        🤖 AI Assistant
+                    </button>
+                    <button onclick="showCart()" class="relative bg-rajasthan-gold text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition-colors">
+                        🛒 Cart (<span id="cartCount">0</span>)
+                    </button>
+                    <button onclick="showPage('login')" class="bg-rajasthan-red text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">Login</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+        <!-- Home Page -->
+        <div id="homePage" class="page">
+            <!-- Hero Section -->
+            <div class="gradient-bg text-white py-20">
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-float">देश का खजाना</h1>
+                    <p class="text-xl md:text-2xl mb-8 opacity-90">Local Art, Global Heart</p>
+                    <div class="max-w-2xl mx-auto flex">
+                        <input type="text" id="searchInput" placeholder="Search for handicrafts, textiles, jewelry..." class="flex-1 px-6 py-4 rounded-l-xl text-gray-800 text-lg focus:outline-none">
+                        <button onclick="performSearch()" class="bg-rajasthan-red px-8 py-4 rounded-r-xl hover:bg-red-600 transition-colors">
+                            🔍 Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center card-hover">
+                        <div class="text-3xl font-bold text-rajasthan-red mb-2">2,500+</div>
+                        <div class="text-gray-600">Products</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center card-hover">
+                        <div class="text-3xl font-bold text-rajasthan-gold mb-2">150+</div>
+                        <div class="text-gray-600">Verified Sellers</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center card-hover">
+                        <div class="text-3xl font-bold text-rajasthan-blue mb-2">50,000+</div>
+                        <div class="text-gray-600">Happy Customers</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center card-hover">
+                        <div class="text-3xl font-bold text-rajasthan-green mb-2">4.8⭐</div>
+                        <div class="text-gray-600">Average Rating</div>
+                    </div>
+                </div>
+
+                             
+                <!-- Product Categories -->
+                <div class="mb-16">
+                    <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">Explore Categories</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('handicrafts')">
+                            <div class="text-5xl mb-4">🎨</div>
+                            <h3 class="font-semibold text-gray-800">Handicrafts</h3>
+                            <p class="text-sm text-gray-600">Traditional Art</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('textiles')">
+                            <div class="text-5xl mb-4">🧵</div>
+                            <h3 class="font-semibold text-gray-800">Textiles</h3>
+                            <p class="text-sm text-gray-600">Fabrics & Clothing</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('jewelry')">
+                            <div class="text-5xl mb-4">💎</div>
+                            <h3 class="font-semibold text-gray-800">Jewelry</h3>
+                            <p class="text-sm text-gray-600">Traditional Ornaments</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('pottery')">
+                            <div class="text-5xl mb-4">🏺</div>
+                            <h3 class="font-semibold text-gray-800">Blue Pottery</h3>
+                            <p class="text-sm text-gray-600">Ceramic Art</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('leather')">
+                            <div class="text-5xl mb-4">👜</div>
+                            <h3 class="font-semibold text-gray-800">Leather Goods</h3>
+                            <p class="text-sm text-gray-600">Bags & Accessories</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('spices')">
+                            <div class="text-5xl mb-4">🌶️</div>
+                            <h3 class="font-semibold text-gray-800">Spices</h3>
+                            <p class="text-sm text-gray-600">Authentic Flavors</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('snacks')">
+                            <div class="text-5xl mb-4">🥨</div>
+                            <h3 class="font-semibold text-gray-800">Snacks</h3>
+                            <p class="text-sm text-gray-600">Traditional Treats</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('paintings')">
+                            <div class="text-5xl mb-4">🖼️</div>
+                            <h3 class="font-semibold text-gray-800">Paintings</h3>
+                            <p class="text-sm text-gray-600">Miniature Art</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('footwear')">
+                            <div class="text-5xl mb-4">👡</div>
+                            <h3 class="font-semibold text-gray-800">Footwear</h3>
+                            <p class="text-sm text-gray-600">Mojari & Jutis</p>
+                        </div>
+                        <div class="category-icon bg-white p-6 rounded-xl shadow-lg text-center cursor-pointer transition-transform" onclick="filterByCategory('homedecor')">
+                            <div class="text-5xl mb-4">🏠</div>
+                            <h3 class="font-semibold text-gray-800">Home Decor</h3>
+                            <p class="text-sm text-gray-600">Interior Items</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Products -->
+                <div class="mb-16">
+                    <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">Featured Products</h2>
+                    <div id="featuredProducts" class="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+                        <!-- Products will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Special Offers Banner -->
+                <div class="bg-gradient-to-r from-rajasthan-red to-rajasthan-orange text-white p-8 rounded-2xl mb-16">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold mb-4">🎉 Festival Special Offers</h2>
+                        <p class="text-xl mb-6">Up to 50% OFF on selected items | Free shipping above ₹999</p>
+                        <button onclick="showPage('offers')" class="bg-white text-rajasthan-red px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+                            View All Offers
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Detail Page -->
+        <div id="productPage" class="page hidden">
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <button onclick="showPage('home')" class="mb-6 text-rajasthan-red hover:underline">← Back to Products</button>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <div id="productMainImage" class="h-96 bg-gray-200 rounded-xl mb-4 flex items-center justify-center text-8xl product-image">🎨</div>
+                        <div class="grid grid-cols-4 gap-3">
+                            <div class="h-20 bg-gray-200 rounded-lg cursor-pointer"></div>
+                            <div class="h-20 bg-gray-200 rounded-lg cursor-pointer"></div>
+                            <div class="h-20 bg-gray-200 rounded-lg cursor-pointer"></div>
+                            <div class="h-20 bg-gray-200 rounded-lg cursor-pointer"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 id="productDetailTitle" class="text-4xl font-bold text-gray-800 mb-4">Handcrafted Blue Pottery Vase</h1>
+                        <div class="flex items-center mb-4">
+                            <span class="text-yellow-500 text-2xl">⭐⭐⭐⭐⭐</span>
+                            <span class="text-gray-600 ml-3">(248 reviews)</span>
+                        </div>
+                        <div class="flex items-center mb-6">
+                            <span id="productDetailPrice" class="text-4xl font-bold text-rajasthan-red">₹2,499</span>
+                            <span class="text-2xl text-gray-500 line-through ml-4">₹3,499</span>
+                            <span class="bg-rajasthan-green text-white px-3 py-1 rounded-full text-sm ml-4">29% OFF</span>
+                        </div>
+                        
+                        <!-- Seller Info -->
+                        <div class="bg-gray-100 p-4 rounded-xl mb-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-lg">✅ Verified Seller</h3>
+                                    <p class="text-gray-600">Rajesh Pottery Works - Jaipur</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="text-yellow-500">⭐⭐⭐⭐⭐</span>
+                                        <span class="text-sm text-gray-600 ml-2">4.9 (156 reviews)</span>
+                                    </div>
+                                </div>
+                                <button onclick="showSellerProfile('seller1')" class="text-rajasthan-blue hover:underline">View Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg mb-3">Product Details</h3>
+                            <p id="productDetailDescription" class="text-gray-700 leading-relaxed">
+                                Authentic Jaipur Blue Pottery vase handcrafted by skilled artisans. Features traditional floral patterns with vibrant blue and white colors. Perfect for home decoration and gifting.
+                            </p>
+                        </div>
+
+                        <!-- Product Features -->
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg mb-3">Features</h3>
+                            <ul class="space-y-2 text-gray-700">
+                                <li>✓ 100% Handmade</li>
+                                <li>✓ Traditional Blue Pottery Technique</li>
+                                <li>✓ Lead-free and Food Safe</li>
+                                <li>✓ Unique Floral Design</li>
+                                <li>✓ Perfect for Gifting</li>
+                            </ul>
+                        </div>
+
+                        <!-- Shipping & Return -->
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg mb-3">Shipping & Returns</h3>
+                            <div class="space-y-2 text-gray-700">
+                                <p>🚚 Free shipping on orders above ₹999</p>
+                                <p>📦 Delivery in 3-5 business days</p>
+                                <p>↩️ 7-day return policy</p>
+                                <p>🛡️ Secure packaging guaranteed</p>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-4 mb-8">
+                            <button onclick="addToCart('product1')" class="flex-1 bg-rajasthan-gold text-white py-4 rounded-xl font-bold text-lg hover:bg-yellow-500 transition-colors">
+                                Add to Cart
+                            </button>
+                            <button onclick="buyNow('product1')" class="flex-1 bg-rajasthan-red text-white py-4 rounded-xl font-bold text-lg hover:bg-red-600 transition-colors">
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="mt-16">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-8">Customer Reviews</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-rajasthan-gold rounded-full flex items-center justify-center text-white font-bold">P</div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold">Priya Sharma</h4>
+                                    <div class="text-yellow-500">⭐⭐⭐⭐⭐</div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">"Beautiful pottery vase! The craftsmanship is excellent and it looks amazing in my living room. Highly recommended!"</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-rajasthan-blue rounded-full flex items-center justify-center text-white font-bold">A</div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold">Amit Kumar</h4>
+                                    <div class="text-yellow-500">⭐⭐⭐⭐⭐</div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">"Authentic Rajasthani pottery. Fast delivery and excellent packaging. Will definitely buy again!"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seller Dashboard -->
+        <div id="sellerDashboard" class="page hidden">
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h1 class="text-4xl font-bold text-gray-800">Seller Dashboard</h1>
+                    <button onclick="showPage('home')" class="bg-rajasthan-red text-white px-6 py-3 rounded-xl">Back to Home</button>
+                </div>
+
+                <!-- Seller Profile Card -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg mb-8">
+                    <div class="flex items-center space-x-6">
+                        <div class="w-24 h-24 bg-rajasthan-gold rounded-full flex items-center justify-center text-white text-3xl font-bold">RS</div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-gray-800">Rajesh Pottery Works</h2>
+                            <p class="text-gray-600 mb-2">📍 Jaipur, Rajasthan | 📞 +91 98765 43210</p>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center">
+                                    <span class="text-yellow-500">⭐⭐⭐⭐⭐</span>
+                                    <span class="text-gray-600 ml-2">4.9 (156 reviews)</span>
+                                </div>
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">✅ Verified</span>
+                            </div>
+                        </div>
+                        <button class="bg-rajasthan-blue text-white px-6 py-3 rounded-xl">Edit Profile</button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Stats -->
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-3xl font-bold text-rajasthan-red mb-2">₹1,25,670</div>
+                        <div class="text-gray-600">Total Sales</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-3xl font-bold text-rajasthan-gold mb-2">47</div>
+                        <div class="text-gray-600">Products Listed</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-3xl font-bold text-rajasthan-blue mb-2">234</div>
+                        <div class="text-gray-600">Orders Completed</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-3xl font-bold text-rajasthan-green mb-2">4.9⭐</div>
+                        <div class="text-gray-600">Average Rating</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & Recent Orders -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Quick Actions</h3>
+                        <div class="space-y-4">
+                            <button class="w-full bg-rajasthan-red text-white py-3 rounded-xl font-semibold hover:bg-red-600 transition-colors">
+                                + Add New Product
+                            </button>
+                            <button class="w-full bg-rajasthan-gold text-white py-3 rounded-xl font-semibold hover:bg-yellow-500 transition-colors">
+                                📊 View Analytics
+                            </button>
+                            <button class="w-full bg-rajasthan-blue text-white py-3 rounded-xl font-semibold hover:bg-blue-600 transition-colors">
+                                💬 Customer Messages
+                            </button>
+                            <button class="w-full bg-rajasthan-green text-white py-3 rounded-xl font-semibold hover:bg-green-600 transition-colors">
+                                🎯 Create Special Offer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Recent Orders</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="font-semibold">Blue Pottery Vase</p>
+                                    <p class="text-sm text-gray-600">Order #RJ2024001</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Delivered</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="font-semibold">Handicraft Set</p>
+                                    <p class="text-sm text-gray-600">Order #RJ2024002</p>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Processing</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="font-semibold">Traditional Jewelry</p>
+                                    <p class="text-sm text-gray-600">Order #RJ2024003</p>
+                                </div>
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Shipped</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="loginPage" class="page hidden">
+            <div class="min-h-screen flex items-center justify-center gradient-bg">
+                <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome to RajMart</h2>
+                        <p class="text-gray-600">Login to your account</p>
+                    </div>
+                    <form class="space-y-6">
+                        <div>
+                            <input type="email" placeholder="Email Address" class="w-full p-4 border border-gray-300 rounded-xl focus:border-rajasthan-red focus:outline-none">
+                        </div>
+                        <div>
+                            <input type="password" placeholder="Password" class="w-full p-4 border border-gray-300 rounded-xl focus:border-rajasthan-red focus:outline-none">
+                        </div>
+                        <button type="button" onclick="showPage('home')" class="w-full bg-rajasthan-red text-white py-4 rounded-xl font-bold text-lg hover:bg-red-600 transition-colors">
+                            Login
+                        </button>
+                    </form>
+                    <div class="mt-8 text-center space-y-3">
+                        <button class="text-rajasthan-red hover:underline">Forgot Password?</button>
+                        <br>
+                        <button class="text-rajasthan-blue hover:underline" onclick="showPage('sellerDashboard')">Seller Login</button>
+                        <br>
+                        <button class="text-gray-600 hover:underline">Don't have an account? Sign up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Modal -->
+    <div id="aiAssistant" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">🤖 AI Assistant</h3>
+                <button onclick="toggleAIAssistant()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div id="aiChat" class="h-64 overflow-y-auto bg-gray-50 p-4 rounded-xl mb-4">
+                <div class="text-center text-gray-600 mb-4">
+                    <p>Hello! I'm your AI shopping assistant. How can I help you today?</p>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <input type="text" id="aiInput" placeholder="Ask me anything..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-rajasthan-blue">
+                <button onclick="sendAIMessage()" class="bg-rajasthan-blue text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-colors">
+                    Send
+                </button>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-2">
+                <button onclick="askAI('Show me best deals')" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200">Best Deals</button>
+                <button onclick="askAI('Recommend pottery items')" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200">Pottery Items</button>
+                <button onclick="askAI('Track my order')" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200">Track Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-96 overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">🛒 Shopping Cart</h3>
+                <button onclick="showCart()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div id="cartItems">
+                <div class="text-center text-gray-600 py-8">
+                    <p>Your cart is empty</p>
+                    <button onclick="showCart(); showPage('home')" class="mt-4 bg-rajasthan-red text-white px-6 py-3 rounded-xl">Continue Shopping</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'en';
+        let cart = [];
+        let aiAssistantOpen = false;
+
+        // Sample product data
+        const products = [
+            {
+                id: 'product1',
+                name: 'Handcrafted Blue Pottery Vase',
+                price: 2499,
+                originalPrice: 3499,
+                category: 'pottery',
+                image: '🏺',
+                rating: 4.9,
+                reviews: 248,
+                seller: 'Rajesh Pottery Works',
+                description: 'Authentic Jaipur Blue Pottery vase handcrafted by skilled artisans.'
+            },
+            {
+                id: 'product2',
+                name: 'Traditional Rajasthani Jewelry Set',
+                price: 4999,
+                originalPrice: 6999,
+                category: 'jewelry',
+                image: '💎',
+                rating: 4.8,
+                reviews: 156,
+                seller: 'Meera Jewelers',
+                description: 'Beautiful traditional jewelry set with intricate designs.'
+            },
+            {
+                id: 'product3',
+                name: 'Handwoven Textile Saree',
+                price: 3499,
+                originalPrice: 4999,
+                category: 'textiles',
+                image: '🧵',
+                rating: 4.7,
+                reviews: 89,
+                seller: 'Textile Crafts Jaipur',
+                description: 'Elegant handwoven saree with traditional patterns.'
+            },
+            {
+                id: 'product4',
+                name: 'Leather Mojari Shoes',
+                price: 1299,
+                originalPrice: 1799,
+                category: 'footwear',
+                image: '👡',
+                rating: 4.6,
+                reviews: 203,
+                seller: 'Footwear Artisans',
+                description: 'Comfortable traditional mojari shoes with authentic designs.'
+            }
+        ];
+
+        // Language translations
+        const translations = {
+            en: {
+                title: "RajMart - Authentic Rajasthani Products",
+                subtitle: "Discover Authentic Rajasthani Heritage Products",
+                search: "Search for handicrafts, textiles, jewelry...",
+                addToCart: "Add to Cart",
+                buyNow: "Buy Now",
+                backToHome: "← Back to Products",
+                login: "Login",
+                aiAssistant: "🤖 AI Assistant"
+            },
+            hi: {
+                title: "राजमार्ट - प्रामाणिक राजस्थानी उत्पाद",
+                subtitle: "प्रामाणिक राजस्थानी विरासत उत्पादों की खोज करें",
+                search: "हस्तशिल्प, वस्त्र, आभूषण खोजें...",
+                addToCart: "कार्ट में डालें",
+                buyNow: "अभी खरीदें",
+                backToHome: "← उत्पादों पर वापस",
+                login: "लॉगिन",
+                aiAssistant: "🤖 AI सहायक"
+            },
+            raj: {
+                title: "राजमार्ट - असली राजस्थानी सामान",
+                subtitle: "असली राजस्थानी विरासत रा सामान री खोज करो",
+                search: "हस्तकला, कपड़ा, गहना खोजो...",
+                addToCart: "डलिया में नाखो",
+                buyNow: "अबै खरीदो",
+                backToHome: "← सामान पर वापस",
+                login: "लॉगिन",
+                aiAssistant: "🤖 AI सहायक"
+            }
+        };
+
+        // Page Navigation
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            const pageElement = document.getElementById(pageName + 'Page');
+            if (pageElement) {
+                pageElement.classList.remove('hidden');
+            }
+
+            if (pageName === 'home') {
+                loadFeaturedProducts();
+            }
+        }
+
+        // Load Featured Products
+        function loadFeaturedProducts() {
+            const container = document.getElementById('featuredProducts');
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = createProductCard(product);
+                container.appendChild(productCard);
+            });
+        }
+
+        // Create Product Card
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-xl shadow-lg overflow-hidden card-hover cursor-pointer';
+            card.onclick = () => showProductDetail(product.id);
+            
+            const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+            
+            card.innerHTML = `
+                <div class="h-48 bg-gradient-to-br from-rajasthan-gold to-rajasthan-orange flex items-center justify-center text-6xl product-image">
+                    ${product.image}
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">${product.name}</h3>
+                    <div class="flex items-center mb-3">
+                        <span class="text-yellow-500">⭐⭐⭐⭐⭐</span>
+                        <span class="text-sm text-gray-600 ml-2">(${product.reviews})</span>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl font-bold text-rajasthan-red">₹${product.price}</span>
+                        <span class="text-lg text-gray-500 line-through ml-2">₹${product.originalPrice}</span>
+                        <span class="bg-rajasthan-green text-white px-2 py-1 rounded-full text-xs ml-2">${discount}% OFF</span>
+                    </div>
+                    <button onclick="event.stopPropagation(); addToCart('${product.id}')" class="w-full bg-rajasthan-red text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors">
+                        Add to Cart
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Show Product Detail
+        function showProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('productDetailTitle').textContent = product.name;
+            document.getElementById('productDetailPrice').textContent = `₹${product.price}`;
+            document.getElementById('productDetailDescription').textContent = product.description;
+            document.getElementById('productMainImage').textContent = product.image;
+
+            showPage('product');
+        }
+
+        // Cart Functions
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                cart.push(product);
+                updateCartCount();
+                showNotification(`${product.name} added to cart! 🛒`);
+            }
+        }
+
+        function updateCartCount() {
+            document.getElementById('cartCount').textContent = cart.length;
+        }
+
+        function showCart() {
+            const modal = document.getElementById('cartModal');
+            const cartItems = document.getElementById('cartItems');
+            
+            if (modal.classList.contains('hidden')) {
+                if (cart.length === 0) {
+                    cartItems.innerHTML = `
+                        <div class="text-center text-gray-600 py-8">
+                            <p>Your cart is empty</p>
+                            <button onclick="showCart(); showPage('home')" class="mt-4 bg-rajasthan-red text-white px-6 py-3 rounded-xl">Continue Shopping</button>
+                        </div>
+                    `;
+                } else {
+                    let total = 0;
+                    cartItems.innerHTML = cart.map(item => {
+                        total += item.price;
+                        return `
+                            <div class="flex items-center justify-between p-4 border-b">
+                                <div class="flex items-center space-x-4">
+                                    <div class="text-3xl">${item.image}</div>
+                                    <div>
+                                        <h4 class="font-semibold">${item.name}</h4>
+                                        <p class="text-rajasthan-red font-bold">₹${item.price}</p>
+                                    </div>
+                                </div>
+                                <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700">Remove</button>
+                            </div>
+                        `;
+                    }).join('') + `
+                        <div class="mt-6 pt-4 border-t">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-xl font-bold">Total: ₹${total}</span>
+                            </div>
+                            <button class="w-full bg-rajasthan-red text-white py-3 rounded-xl font-bold hover:bg-red-600 transition-colors">
+                                Proceed to Checkout
+                            </button>
+                        </div>
+                    `;
+                }
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartCount();
+            showCart(); // Refresh cart display
+        }
+
+        // AI Assistant Functions
+        function toggleAIAssistant() {
+            const modal = document.getElementById('aiAssistant');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                aiAssistantOpen = true;
+            } else {
+                modal.classList.add('hidden');
+                aiAssistantOpen = false;
+            }
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            if (message) {
+                addAIMessage('user', message);
+                input.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const response = generateAIResponse(message);
+                    addAIMessage('ai', response);
+                }, 1000);
+            }
+        }
+
+        function askAI(question) {
+            document.getElementById('aiInput').value = question;
+            sendAIMessage();
+        }
+
+        function addAIMessage(sender, message) {
+            const chat = document.getElementById('aiChat');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `mb-3 ${sender === 'user' ? 'text-right' : 'text-left'}`;
+            messageDiv.innerHTML = `
+                <div class="inline-block p-3 rounded-lg ${sender === 'user' ? 'bg-rajasthan-blue text-white' : 'bg-gray-200 text-gray-800'}">
+                    ${message}
+                </div>
+            `;
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function generateAIResponse(message) {
+            const responses = {
+                'show me best deals': 'Here are today\'s best deals: Blue Pottery Vase (29% off), Traditional Jewelry Set (28% off), and Handwoven Saree (30% off)!',
+                'recommend pottery items': 'I recommend our Blue Pottery collection! The handcrafted vases and decorative items are very popular with customers.',
+                'track my order': 'Please provide your order number and I\'ll help you track it. You can also check your order status in your account dashboard.',
+                'default': 'I\'m here to help you find the perfect Rajasthani products! You can ask me about deals, recommendations, or any questions about our products.'
+            };
+            
+            const lowerMessage = message.toLowerCase();
+            for (const key in responses) {
+                if (lowerMessage.includes(key)) {
+                    return responses[key];
+                }
+            }
+            return responses.default;
+        }
+
+        // Search Function
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (query) {
+                showNotification(`Searching for "${query}"...`);
+                // In a real app, this would filter products
+            }
+        }
+
+        // Filter by Category
+        function filterByCategory(category) {
+            showNotification(`Showing ${category} products...`);
+            // In a real app, this would filter products by category
+        }
+
+        // Notification Function
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-rajasthan-green text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Language Selection
+        document.getElementById('languageSelect').addEventListener('change', function(e) {
+            currentLanguage = e.target.value;
+            updateLanguage();
+        });
+
+        function updateLanguage() {
+            const t = translations[currentLanguage];
+            // Update UI elements with translations
+            showNotification(`Language changed to ${currentLanguage === 'hi' ? 'हिंदी' : currentLanguage === 'raj' ? 'राजस्थानी' : 'English'}`);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('home');
+            loadFeaturedProducts();
+            
+            // Add Enter key support for AI chat
+            document.getElementById('aiInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendAIMessage();
+                }
+            });
+        });
+
+        // Buy Now Function
+        function buyNow(productId) {
+            addToCart(productId);
+            showNotification('Redirecting to checkout...');
+            // In a real app, this would redirect to checkout
+        }
+
+        // Seller Profile Function
+        function showSellerProfile(sellerId) {
+            showNotification('Opening seller profile...');
+            // In a real app, this would show detailed seller information
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979b6fec127c549c',t:'MTc1Njk2NzQxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

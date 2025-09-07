@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RajMart Seller Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'rajasthan-gold': '#FFD700',
+                        'rajasthan-red': '#DC143C',
+                        'rajasthan-blue': '#4169E1',
+                        'rajasthan-orange': '#FF8C00',
+                        'rajasthan-green': '#228B22'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .gradient-bg { background: linear-gradient(135deg, #FFD700 0%, #FF8C00 50%, #DC143C 100%); }
+        .notification-slide { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .chart-bar { transition: height 0.5s ease; }
+        .pulse-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">🏛️ DESH.e Business</div>
+                    <div class="hidden md:flex items-center space-x-2">
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">✅ Verified</span>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Premium Seller</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <select class="bg-gray-100 px-3 py-2 rounded-lg" id="languageSelect">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="raj">राजस्थानी</option>
+                    </select>
+                    <div class="relative">
+                        <button onclick="toggleNotifications()" class="relative bg-rajasthan-blue text-white p-2 rounded-lg hover:bg-blue-600">
+                            🔔
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-rajasthan-gold rounded-full flex items-center justify-center text-white font-bold">RS</div>
+                        <div class="hidden md:block">
+                            <p class="font-semibold text-gray-800">Rajesh Sharma</p>
+                            <p class="text-sm text-gray-600">Pottery Works</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg min-h-screen hidden md:block">
+            <div class="p-6">
+                <nav class="space-y-2">
+                    <button onclick="showSection('dashboard')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center space-x-3">
+                        <span>📊</span><span>Dashboard</span>
+                    </button>
+                    <button onclick="showSection('profile')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center space-x-3">
+                        <span>👤</span><span>Profile</span>
+                    </button>
+                    <button onclick="showSection('products')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center space-x-3">
+                        <span>📦</span><span>Products</span>
+                    </button>
+                    <button onclick="showSection('orders')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center space-x-3">
+                        <span>🛒</span><span>Orders</span>
+                    </button>
+                    <button onclick="showSection('offers')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center space-x-3">
+                        <span>🎯</span><span>Offers</span>
+                    </button>
+                    <button onclick="showSection('feedback')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center space-x-3">
+                        <span>⭐</span><span>Reviews</span>
+                    </button>
+                    <button onclick="showSection('analytics')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center space-x-3">
+                        <span>📈</span><span>Analytics</span>
+                    </button>
+                    <button onclick="showSection('ai')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center space-x-3">
+                        <span>🤖</span><span>AI Assistant</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg z-40">
+            <div class="flex justify-around py-2">
+                <button onclick="showSection('dashboard')" class="flex flex-col items-center p-2">
+                    <span class="text-xl">📊</span>
+                    <span class="text-xs">Dashboard</span>
+                </button>
+                <button onclick="showSection('products')" class="flex flex-col items-center p-2">
+                    <span class="text-xl">📦</span>
+                    <span class="text-xs">Products</span>
+                </button>
+                <button onclick="showSection('orders')" class="flex flex-col items-center p-2">
+                    <span class="text-xl">🛒</span>
+                    <span class="text-xs">Orders</span>
+                </button>
+                <button onclick="showSection('analytics')" class="flex flex-col items-center p-2">
+                    <span class="text-xl">📈</span>
+                    <span class="text-xs">Analytics</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6 pb-20 md:pb-6">
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="section">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome back, Rajesh! 🙏</h1>
+                    <p class="text-gray-600">Here's what's happening with your store today</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm">Today's Sales</p>
+                                <p class="text-2xl font-bold text-rajasthan-red">₹12,450</p>
+                                <p class="text-green-600 text-sm">↗️ +15%</p>
+                            </div>
+                            <div class="text-3xl">💰</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm">New Orders</p>
+                                <p class="text-2xl font-bold text-rajasthan-blue">8</p>
+                                <p class="text-green-600 text-sm">↗️ +3</p>
+                            </div>
+                            <div class="text-3xl">📋</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm">Total Products</p>
+                                <p class="text-2xl font-bold text-rajasthan-gold">47</p>
+                                <p class="text-blue-600 text-sm">5 low stock</p>
+                            </div>
+                            <div class="text-3xl">📦</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm">Rating</p>
+                                <p class="text-2xl font-bold text-rajasthan-green">4.9⭐</p>
+                                <p class="text-gray-600 text-sm">156 reviews</p>
+                            </div>
+                            <div class="text-3xl">⭐</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Quick Actions -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Recent Orders</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="text-2xl">🏺</div>
+                                    <div>
+                                        <p class="font-semibold">Blue Pottery Vase</p>
+                                        <p class="text-sm text-gray-600">Order #RJ2024001</p>
+                                    </div>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Processing</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="text-2xl">💎</div>
+                                    <div>
+                                        <p class="font-semibold">Traditional Jewelry</p>
+                                        <p class="text-sm text-gray-600">Order #RJ2024002</p>
+                                    </div>
+                                </div>
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Shipped</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="showSection('products'); showAddProduct()" class="bg-rajasthan-red text-white p-4 rounded-lg hover:bg-red-600 transition-colors">
+                                <div class="text-2xl mb-2">➕</div>
+                                <div class="text-sm">Add Product</div>
+                            </button>
+                            <button onclick="showSection('offers')" class="bg-rajasthan-gold text-white p-4 rounded-lg hover:bg-yellow-500 transition-colors">
+                                <div class="text-2xl mb-2">🎯</div>
+                                <div class="text-sm">Create Offer</div>
+                            </button>
+                            <button onclick="showSection('orders')" class="bg-rajasthan-blue text-white p-4 rounded-lg hover:bg-blue-600 transition-colors">
+                                <div class="text-2xl mb-2">📋</div>
+                                <div class="text-sm">View Orders</div>
+                            </button>
+                            <button onclick="showSection('analytics')" class="bg-rajasthan-green text-white p-4 rounded-lg hover:bg-green-600 transition-colors">
+                                <div class="text-2xl mb-2">📊</div>
+                                <div class="text-sm">Analytics</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="profileSection" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Seller Profile</h1>
+                    <p class="text-gray-600">Manage your store information and verification details</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">Basic Information</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                    <input type="text" value="Rajesh Sharma" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Shop Name</label>
+                                    <input type="text" value="Rajesh Pottery Works" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                                    <input type="text" value="Jaipur, Rajasthan" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+                                    <input type="tel" value="+91 98765 43210" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                    <input type="email" value="rajesh@potteryworks.com" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">Business Details</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">GST Number</label>
+                                    <input type="text" value="08ABCDE1234F1Z5" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Business Category</label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                                        <option>Handicrafts & Pottery</option>
+                                        <option>Textiles</option>
+                                        <option>Jewelry</option>
+                                        <option>Leather Goods</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Store Logo</label>
+                                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                        <div class="text-4xl mb-2">🏺</div>
+                                        <p class="text-gray-600">Click to upload logo</p>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-green-600">✅</span>
+                                        <span class="text-green-800 font-semibold">Verified Seller</span>
+                                    </div>
+                                    <p class="text-green-700 text-sm mt-1">Your account is verified and approved for selling</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end space-x-4">
+                        <button class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button class="px-6 py-3 bg-rajasthan-red text-white rounded-lg hover:bg-red-600">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div id="productsSection" class="section hidden">
+                <div class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">Product Management</h1>
+                        <p class="text-gray-600">Manage your product inventory and listings</p>
+                    </div>
+                    <button onclick="showAddProduct()" class="bg-rajasthan-red text-white px-6 py-3 rounded-lg hover:bg-red-600">
+                        ➕ Add New Product
+                    </button>
+                </div>
+
+                <!-- Product Filters -->
+                <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option>All Categories</option>
+                            <option>Pottery</option>
+                            <option>Jewelry</option>
+                            <option>Textiles</option>
+                        </select>
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Inactive</option>
+                            <option>Low Stock</option>
+                        </select>
+                        <input type="text" placeholder="Search products..." class="px-4 py-2 border border-gray-300 rounded-lg flex-1 min-w-64">
+                    </div>
+                </div>
+
+                <!-- Products List -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Product</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Category</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Price</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Stock</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Status</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="text-3xl">🏺</div>
+                                            <div>
+                                                <p class="font-semibold">Blue Pottery Vase</p>
+                                                <p class="text-sm text-gray-600">Handcrafted ceramic vase</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-600">Pottery</td>
+                                    <td class="px-6 py-4 font-semibold">₹2,499</td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">5 left</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800">Edit</button>
+                                            <button class="text-red-600 hover:text-red-800">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="text-3xl">💎</div>
+                                            <div>
+                                                <p class="font-semibold">Traditional Jewelry Set</p>
+                                                <p class="text-sm text-gray-600">Silver jewelry with stones</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-600">Jewelry</td>
+                                    <td class="px-6 py-4 font-semibold">₹4,999</td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">15 left</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800">Edit</button>
+                                            <button class="text-red-600 hover:text-red-800">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div id="ordersSection" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Order Management</h1>
+                    <p class="text-gray-600">Track and manage all your customer orders</p>
+                </div>
+
+                <!-- Order Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-2xl font-bold text-yellow-600 mb-2">8</div>
+                        <div class="text-gray-600">Pending</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-2xl font-bold text-blue-600 mb-2">12</div>
+                        <div class="text-gray-600">Processing</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-2xl font-bold text-green-600 mb-2">45</div>
+                        <div class="text-gray-600">Shipped</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-2xl font-bold text-gray-600 mb-2">2</div>
+                        <div class="text-gray-600">Returns</div>
+                    </div>
+                </div>
+
+                <!-- Orders List -->
+                <div class="bg-white rounded-xl shadow-lg">
+                    <div class="p-6 border-b">
+                        <div class="flex flex-wrap gap-4">
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg">
+                                <option>All Orders</option>
+                                <option>Pending</option>
+                                <option>Processing</option>
+                                <option>Shipped</option>
+                                <option>Delivered</option>
+                            </select>
+                            <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <input type="text" placeholder="Search orders..." class="px-4 py-2 border border-gray-300 rounded-lg flex-1 min-w-64">
+                        </div>
+                    </div>
+
+                    <div class="divide-y divide-gray-200">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="font-bold text-lg">Order #RJ2024001</h3>
+                                    <p class="text-gray-600">Priya Sharma • +91 98765 43210</p>
+                                    <p class="text-sm text-gray-500">Ordered on Dec 15, 2024</p>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Processing</span>
+                            </div>
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="text-3xl">🏺</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold">Blue Pottery Vase</p>
+                                    <p class="text-gray-600">Quantity: 1 • ₹2,499</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button class="bg-rajasthan-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600">Confirm Order</button>
+                                <button class="bg-rajasthan-green text-white px-4 py-2 rounded-lg hover:bg-green-600">Mark as Shipped</button>
+                                <button class="border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50">Contact Customer</button>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="font-bold text-lg">Order #RJ2024002</h3>
+                                    <p class="text-gray-600">Amit Kumar • +91 87654 32109</p>
+                                    <p class="text-sm text-gray-500">Ordered on Dec 14, 2024</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Shipped</span>
+                            </div>
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="text-3xl">💎</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold">Traditional Jewelry Set</p>
+                                    <p class="text-gray-600">Quantity: 1 • ₹4,999</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg">Track Package</button>
+                                <button class="border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50">Contact Customer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offers Section -->
+            <div id="offersSection" class="section hidden">
+                <div class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">Offers & Promotions</h1>
+                        <p class="text-gray-600">Create and manage special offers for your products</p>
+                    </div>
+                    <button onclick="showCreateOffer()" class="bg-rajasthan-gold text-white px-6 py-3 rounded-lg hover:bg-yellow-500">
+                        🎯 Create New Offer
+                    </button>
+                </div>
+
+                <!-- Active Offers -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-rajasthan-red to-rajasthan-orange text-white p-6 rounded-xl shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold">Festival Special</h3>
+                                <p class="opacity-90">30% OFF on all pottery items</p>
+                            </div>
+                            <span class="bg-white text-rajasthan-red px-3 py-1 rounded-full text-sm font-semibold">Active</span>
+                        </div>
+                        <div class="text-sm opacity-90 mb-4">
+                            <p>Valid until: Dec 31, 2024</p>
+                            <p>Used: 23 times</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button class="bg-white text-rajasthan-red px-4 py-2 rounded-lg text-sm hover:bg-gray-100">Edit</button>
+                            <button class="border border-white px-4 py-2 rounded-lg text-sm hover:bg-white hover:text-rajasthan-red">Pause</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-rajasthan-blue to-rajasthan-green text-white p-6 rounded-xl shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold">Bulk Purchase</h3>
+                                <p class="opacity-90">Buy 3 Get 1 Free</p>
+                            </div>
+                            <span class="bg-white text-rajasthan-blue px-3 py-1 rounded-full text-sm font-semibold">Active</span>
+                        </div>
+                        <div class="text-sm opacity-90 mb-4">
+                            <p>Valid until: Jan 15, 2025</p>
+                            <p>Used: 8 times</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button class="bg-white text-rajasthan-blue px-4 py-2 rounded-lg text-sm hover:bg-gray-100">Edit</button>
+                            <button class="border border-white px-4 py-2 rounded-lg text-sm hover:bg-white hover:text-rajasthan-blue">Pause</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offer Performance -->
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">Offer Performance</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Offer Name</th>
+                                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Type</th>
+                                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Usage</th>
+                                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Revenue</th>
+                                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold">Festival Special</td>
+                                    <td class="px-6 py-4 text-gray-600">Percentage Discount</td>
+                                    <td class="px-6 py-4">23/100</td>
+                                    <td class="px-6 py-4 font-semibold text-green-600">₹45,670</td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Active</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold">Bulk Purchase</td>
+                                    <td class="px-6 py-4 text-gray-600">Buy X Get Y</td>
+                                    <td class="px-6 py-4">8/50</td>
+                                    <td class="px-6 py-4 font-semibold text-green-600">₹23,450</td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Active</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Section -->
+            <div id="feedbackSection" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Customer Feedback</h1>
+                    <p class="text-gray-600">View and respond to customer reviews and ratings</p>
+                </div>
+
+                <!-- Rating Overview -->
+                <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="text-center">
+                            <div class="text-6xl font-bold text-rajasthan-gold mb-2">4.9</div>
+                            <div class="text-yellow-500 text-2xl mb-2">⭐⭐⭐⭐⭐</div>
+                            <div class="text-gray-600">Based on 156 reviews</div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm w-8">5⭐</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600">132</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm w-8">4⭐</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 10%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600">15</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm w-8">3⭐</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 3%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600">5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Reviews -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-rajasthan-gold rounded-full flex items-center justify-center text-white font-bold">P</div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="font-bold">Priya Sharma</h4>
+                                        <div class="text-yellow-500">⭐⭐⭐⭐⭐</div>
+                                    </div>
+                                    <span class="text-sm text-gray-500">2 days ago</span>
+                                </div>
+                                <p class="text-gray-700 mb-3">Beautiful pottery vase! The craftsmanship is excellent and it looks amazing in my living room. Highly recommended!</p>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-600">Blue Pottery Vase</span>
+                                    <button class="text-rajasthan-blue hover:underline text-sm">Reply</button>
+                                    <button class="text-gray-500 hover:text-gray-700 text-sm">👍 Helpful (3)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-rajasthan-blue rounded-full flex items-center justify-center text-white font-bold">A</div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="font-bold">Amit Kumar</h4>
+                                        <div class="text-yellow-500">⭐⭐⭐⭐⭐</div>
+                                    </div>
+                                    <span class="text-sm text-gray-500">5 days ago</span>
+                                </div>
+                                <p class="text-gray-700 mb-3">Authentic Rajasthani pottery. Fast delivery and excellent packaging. Will definitely buy again!</p>
+                                <div class="bg-blue-50 p-3 rounded-lg mb-3">
+                                    <p class="text-sm text-blue-800"><strong>Your Reply:</strong> Thank you so much for your kind words! We're delighted you loved the pottery. Looking forward to serving you again! 🙏</p>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-600">Traditional Jewelry Set</span>
+                                    <button class="text-gray-500 hover:text-gray-700 text-sm">👍 Helpful (7)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analyticsSection" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Analytics & Reports</h1>
+                    <p class="text-gray-600">Track your business performance and insights</p>
+                </div>
+
+                <!-- Time Period Selector -->
+                <div class="bg-white p-4 rounded-xl shadow-lg mb-8">
+                    <div class="flex space-x-4">
+                        <button onclick="setAnalyticsPeriod('daily')" class="analytics-period-btn px-4 py-2 rounded-lg bg-rajasthan-red text-white">Daily</button>
+                        <button onclick="setAnalyticsPeriod('weekly')" class="analytics-period-btn px-4 py-2 rounded-lg border border-gray-300">Weekly</button>
+                        <button onclick="setAnalyticsPeriod('monthly')" class="analytics-period-btn px-4 py-2 rounded-lg border border-gray-300">Monthly</button>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-3xl font-bold text-rajasthan-red mb-2">₹1,25,670</div>
+                        <div class="text-gray-600 mb-1">Total Revenue</div>
+                        <div class="text-green-600 text-sm">↗️ +15.3%</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-3xl font-bold text-rajasthan-blue mb-2">234</div>
+                        <div class="text-gray-600 mb-1">Orders</div>
+                        <div class="text-green-600 text-sm">↗️ +8.2%</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-3xl font-bold text-rajasthan-gold mb-2">1,456</div>
+                        <div class="text-gray-600 mb-1">Visitors</div>
+                        <div class="text-green-600 text-sm">↗️ +12.1%</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div class="text-3xl font-bold text-rajasthan-green mb-2">16.1%</div>
+                        <div class="text-gray-600 mb-1">Conversion</div>
+                        <div class="text-green-600 text-sm">↗️ +2.3%</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Sales Trend</h3>
+                        <div class="h-64 flex items-end justify-between space-x-2">
+                            <div class="chart-bar bg-rajasthan-red rounded-t" style="height: 60%"></div>
+                            <div class="chart-bar bg-rajasthan-red rounded-t" style="height: 80%"></div>
+                            <div class="chart-bar bg-rajasthan-red rounded-t" style="height: 45%"></div>
+                            <div class="chart-bar bg-rajasthan-red rounded-t" style="height: 90%"></div>
+                            <div class="chart-bar bg-rajasthan-red rounded-t" style="height: 70%"></div>
+                            <div class="chart-bar bg-rajasthan-red rounded-t" style="height: 85%"></div>
+                            <div class="chart-bar bg-rajasthan-red rounded-t" style="height: 95%"></div>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600 mt-2">
+                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Top Products</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="text-2xl">🏺</div>
+                                    <span>Blue Pottery Vase</span>
+                                </div>
+                                <span class="font-bold text-rajasthan-red">₹24,990</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="text-2xl">💎</div>
+                                    <span>Traditional Jewelry</span>
+                                </div>
+                                <span class="font-bold text-rajasthan-red">₹19,980</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="text-2xl">🧵</div>
+                                    <span>Handwoven Textile</span>
+                                </div>
+                                <span class="font-bold text-rajasthan-red">₹13,970</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Insights -->
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">Customer Insights</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-rajasthan-blue mb-2">67%</div>
+                            <div class="text-gray-600">Repeat Customers</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-rajasthan-gold mb-2">₹2,340</div>
+                            <div class="text-gray-600">Avg Order Value</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-rajasthan-green mb-2">4.2</div>
+                            <div class="text-gray-600">Items per Order</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Assistant Section -->
+            <div id="aiSection" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">AI Business Assistant</h1>
+                    <p class="text-gray-600">Get personalized recommendations to grow your business</p>
+                </div>
+
+                <!-- AI Recommendations -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-gradient-to-r from-rajasthan-blue to-rajasthan-green text-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="text-3xl">🤖</div>
+                            <h3 class="text-xl font-bold">Price Optimization</h3>
+                        </div>
+                        <p class="mb-4 opacity-90">Based on market analysis, consider increasing the price of your Blue Pottery Vase by 8% to maximize profit.</p>
+                        <button class="bg-white text-rajasthan-blue px-4 py-2 rounded-lg hover:bg-gray-100">Apply Suggestion</button>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-rajasthan-red to-rajasthan-orange text-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="text-3xl">📈</div>
+                            <h3 class="text-xl font-bold">Marketing Tip</h3>
+                        </div>
+                        <p class="mb-4 opacity-90">Create a bundle offer with your top 3 products. Customers who buy pottery also purchase jewelry 73% of the time.</p>
+                        <button class="bg-white text-rajasthan-red px-4 py-2 rounded-lg hover:bg-gray-100">Create Bundle</button>
+                    </div>
+                </div>
+
+                <!-- AI Chat Interface -->
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">Ask AI Assistant</h3>
+                    <div id="aiChatMessages" class="h-64 overflow-y-auto bg-gray-50 p-4 rounded-lg mb-4">
+                        <div class="text-center text-gray-600 mb-4">
+                            <p>Hello! I'm your AI business assistant. Ask me anything about growing your business!</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3">
+                        <input type="text" id="aiChatInput" placeholder="Ask about pricing, marketing, inventory..." class="flex-1 p-3 border border-gray-300 rounded-lg focus:border-rajasthan-blue focus:outline-none">
+                        <button onclick="sendAIMessage()" class="bg-rajasthan-blue text-white px-6 py-3 rounded-lg hover:bg-blue-600">Send</button>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <button onclick="askAI('How to increase sales?')" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200">Increase Sales</button>
+                        <button onclick="askAI('Best pricing strategy?')" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200">Pricing Strategy</button>
+                        <button onclick="askAI('Marketing ideas?')" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200">Marketing Ideas</button>
+                        <button onclick="askAI('Inventory management tips?')" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200">Inventory Tips</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Panel -->
+    <div id="notificationsPanel" class="fixed top-16 right-4 w-80 bg-white rounded-xl shadow-2xl z-50 hidden">
+        <div class="p-4 border-b">
+            <h3 class="font-bold text-lg">Notifications</h3>
+        </div>
+        <div class="max-h-96 overflow-y-auto">
+            <div class="p-4 border-b hover:bg-gray-50">
+                <div class="flex items-start space-x-3">
+                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 pulse-dot"></div>
+                    <div>
+                        <p class="font-semibold text-sm">New Order Received</p>
+                        <p class="text-gray-600 text-sm">Blue Pottery Vase - ₹2,499</p>
+                        <p class="text-gray-500 text-xs">2 minutes ago</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-b hover:bg-gray-50">
+                <div class="flex items-start space-x-3">
+                    <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                    <div>
+                        <p class="font-semibold text-sm">Low Stock Alert</p>
+                        <p class="text-gray-600 text-sm">Blue Pottery Vase - Only 5 left</p>
+                        <p class="text-gray-500 text-xs">1 hour ago</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-b hover:bg-gray-50">
+                <div class="flex items-start space-x-3">
+                    <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div>
+                        <p class="font-semibold text-sm">Payment Received</p>
+                        <p class="text-gray-600 text-sm">Order #RJ2024001 - ₹2,499</p>
+                        <p class="text-gray-500 text-xs">3 hours ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-96 overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-gray-800">Add New Product</h3>
+                    <button onclick="hideAddProduct()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                            <input type="text" placeholder="Enter product name" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                                <option>Select Category</option>
+                                <option>Handicrafts</option>
+                                <option>Pottery</option>
+                                <option>Jewelry</option>
+                                <option>Textiles</option>
+                                <option>Leather Goods</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Price (₹)</label>
+                            <input type="number" placeholder="0" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity</label>
+                            <input type="number" placeholder="0" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Discount (%)</label>
+                            <input type="number" placeholder="0" class="w-full p-3 border border-gray-300 rounded-lg focus:border-rajasthan-red focus:outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea placeholder="Describe your product..." class="w-full p-3 border border-gray-300 rounded-lg h-24 focus:border-rajasthan-red focus:outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                            <div class="text-4xl mb-4">📷</div>
+                            <p class="text-gray-600">Click to upload images or drag and drop</p>
+                            <p class="text-sm text-gray-500 mt-2">PNG, JPG up to 5MB each</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="hideAddProduct()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="button" class="px-6 py-3 bg-rajasthan-red text-white rounded-lg hover:bg-red-600">Add Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 'dashboard';
+        let currentLanguage = 'en';
+
+        // Language translations
+        const translations = {
+            en: {
+                dashboard: "Dashboard",
+                profile: "Profile",
+                products: "Products",
+                orders: "Orders",
+                offers: "Offers",
+                feedback: "Reviews",
+                analytics: "Analytics",
+                ai: "AI Assistant"
+            },
+            hi: {
+                dashboard: "डैशबोर्ड",
+                profile: "प्रोफाइल",
+                products: "उत्पाद",
+                orders: "ऑर्डर",
+                offers: "ऑफर",
+                feedback: "समीक्षा",
+                analytics: "विश्लेषण",
+                ai: "AI सहायक"
+            },
+            raj: {
+                dashboard: "डैशबोर्ड",
+                profile: "प्रोफाइल",
+                products: "सामान",
+                orders: "ऑर्डर",
+                offers: "ऑफर",
+                feedback: "राय",
+                analytics: "विश्लेषण",
+                ai: "AI सहायक"
+            }
+        };
+
+        // Section Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            const section = document.getElementById(sectionName + 'Section');
+            if (section) {
+                section.classList.remove('hidden');
+                currentSection = sectionName;
+            }
+
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-rajasthan-red', 'text-white');
+                item.classList.add('text-gray-700');
+            });
+        }
+
+        // Notifications
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        // Product Management
+        function showAddProduct() {
+            document.getElementById('addProductModal').classList.remove('hidden');
+        }
+
+        function hideAddProduct() {
+            document.getElementById('addProductModal').classList.add('hidden');
+        }
+
+        // Analytics
+        function setAnalyticsPeriod(period) {
+            document.querySelectorAll('.analytics-period-btn').forEach(btn => {
+                btn.classList.remove('bg-rajasthan-red', 'text-white');
+                btn.classList.add('border', 'border-gray-300');
+            });
+            
+            event.target.classList.add('bg-rajasthan-red', 'text-white');
+            event.target.classList.remove('border', 'border-gray-300');
+            
+            showNotification(`Showing ${period} analytics`);
+        }
+
+        // AI Assistant
+        function sendAIMessage() {
+            const input = document.getElementById('aiChatInput');
+            const message = input.value.trim();
+            if (message) {
+                addAIMessage('user', message);
+                input.value = '';
+                
+                setTimeout(() => {
+                    const response = generateAIResponse(message);
+                    addAIMessage('ai', response);
+                }, 1000);
+            }
+        }
+
+        function askAI(question) {
+            document.getElementById('aiChatInput').value = question;
+            sendAIMessage();
+        }
+
+        function addAIMessage(sender, message) {
+            const chat = document.getElementById('aiChatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `mb-4 ${sender === 'user' ? 'text-right' : 'text-left'}`;
+            messageDiv.innerHTML = `
+                <div class="inline-block p-3 rounded-lg max-w-xs ${sender === 'user' ? 'bg-rajasthan-blue text-white' : 'bg-gray-200 text-gray-800'}">
+                    ${message}
+                </div>
+            `;
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function generateAIResponse(message) {
+            const responses = {
+                'how to increase sales': 'Here are 3 proven strategies: 1) Create bundle offers with complementary products 2) Optimize your product photos with better lighting 3) Offer limited-time discounts during festivals. Your pottery items have 85% higher conversion when bundled with home decor!',
+                'best pricing strategy': 'Based on your market analysis: 1) Your pottery is priced 12% below market average - consider a gradual 8% increase 2) Implement dynamic pricing for seasonal items 3) Create premium product tiers. Customers are willing to pay 15% more for "handcrafted" labeled items.',
+                'marketing ideas': 'Top recommendations: 1) Share behind-the-scenes pottery making videos on social media 2) Partner with interior designers for cross-promotion 3) Create "Artisan Story" content highlighting your craftsmanship 4) Offer virtual pottery workshops to build community.',
+                'inventory management tips': 'Smart inventory insights: 1) Your Blue Pottery Vase sells 3x faster during wedding season (Oct-Feb) 2) Maintain 15-day stock buffer for top 5 products 3) Set automatic reorder points at 20% stock level 4) Consider pre-orders for custom designs.',
+                'default': 'I can help you with pricing strategies, marketing ideas, inventory management, customer insights,'
+            };
+            const key = message.toLowerCase();
+            return responses[key] || responses['default'];
+        }
